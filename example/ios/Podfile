@@ -1,0 +1,135 @@
+platform :ios, '13.0'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+# Use locally vendored WechatOpenSDK with arm64 simulator support
+pod 'WechatOpenSDK', :path => 'WechatOpenSDK'
+
+# Patch Mach-O arm64 slices for simulator compatibility:
+# Change LC_VERSION_MIN_IPHONEOS (cmd=0x25) -> LC_SOURCE_VERSION (cmd=0x26)
+# in arm64 slices of WechatOpenSDK and AlipaySDK simulator binaries.
+# This allows arm64 device-only slices to link for simulator on Apple Silicon.
+def patch_arm64_macho(file)
+  return unless File.exist?(file)
+  tmp = `/usr/bin/mktemp /tmp/patch_macho.XXXXXX`.strip
+  # Extract arm64 slice
+  lipo_out = `/usr/bin/xcrun lipo -thin arm64 "#{file}" -output "#{tmp}" 2>&1`
+  unless $?.success? && File.exist?(tmp) && File.size(tmp) > 0
+    File.delete(tmp) rescue nil
+    return
+  end
+  # Read, patch LC_VERSION_MIN_IPHONEOS (0x25) -> LC_SOURCE_VERSION (0x26)
+  data = File.binread(tmp)
+  patched = false
+  pos = 32
+  ncmds = data[16, 4].unpack1('V')
+  ncmds.times do
+    break if pos + 8 > data.bytesize
+    cmd, size = data[pos, 8].unpack('VV')
+    if cmd == 0x25  # LC_VERSION_MIN_IPHONEOS
+      data[pos, 4] = [0x26].pack('V')
+      patched = true
+    end
+    break if size == 0
+    pos += size
+  end
+  if patched
+    File.binwrite(tmp, data)
+    # Recombine with x86_64
+    x86 = `/usr/bin/mktemp /tmp/patch_macho_x86.XXXXXX`.strip
+    system("/usr/bin/xcrun lipo -thin x86_64 \"#{file}\" -output \"#{x86}\" 2>/dev/null")
+    if File.exist?(x86) && File.size(x86) > 0
+      system("/usr/bin/xcrun lipo -create -arch arm64 \"#{tmp}\" -arch x86_64 \"#{x86}\" -output \"#{file}\" 2>/dev/null")
+    end
+    File.delete(x86) rescue nil
+  end
+  File.delete(tmp) rescue nil
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+  end
+
+  # Remove arm64 from EXCLUDED_ARCHS for simulator in all relevant xcconfigs
+  sandbox_root = File.dirname(installer.sandbox.root)
+
+  # 1. Flutter/Generated.xcconfig
+  gen = File.join(sandbox_root, 'Flutter', 'Generated.xcconfig')
+  if File.exist?(gen)
+    content = File.read(gen)
+    content = content.gsub(/EXCLUDED_ARCHS\[sdk=iphonesimulator\*\]\s*=\s*([^\n]+)/) do |_|
+      cur = Regexp.last_match(1).strip.split(/\s+/)
+      fil = cur.reject { |a| a == 'arm64' }
+      "EXCLUDED_ARCHS[sdk=iphonesimulator*]=#{fil.join(' ')}"
+    end
+    File.write(gen, content)
+  end
+
+  # 2. Pods-Runner xcconfigs
+  Dir.glob(File.join(installer.sandbox.target_support_files_dir('Pods-Runner'), 'Pods-Runner.*.xcconfig')).each do |f|
+    content = File.read(f)
+    content = content.gsub(/EXCLUDED_ARCHS\[sdk=iphonesimulator\*\]\s*=\s*[^\n]*/, "EXCLUDED_ARCHS[sdk=iphonesimulator*]=")
+    File.write(f, content)
+  end
+
+  # 3. WechatOpenSDK xcconfigs
+  ['debug', 'release'].each do |c|
+    f = File.join(installer.sandbox.target_support_files_dir('WechatOpenSDK'), "WechatOpenSDK.#{c}.xcconfig")
+    next unless File.exist?(f)
+    content = File.read(f)
+    content = content.gsub(/^\s*EXCLUDED_ARCHS.*\n?/, '')
+    File.write(f, content)
+  end
+
+  # 4. Patch arm64 Mach-O slices for simulator compatibility
+  patch_arm64_macho(File.join(sandbox_root, 'WechatOpenSDK', 'OpenSDK2.0.5', 'libWechatOpenSDK.a'))
+  alipay_sim = File.join(sandbox_root, 'Frameworks', 'AlipaySDK.xcframework', 'ios-arm64_x86_64-simulator', 'AlipaySDK.framework', 'AlipaySDK')
+  unless File.exist?(alipay_sim)
+    alipay_sim = File.join(File.dirname(sandbox_root), 'ios', 'Frameworks', 'AlipaySDK.xcframework', 'ios-arm64_x86_64-simulator', 'AlipaySDK.framework', 'AlipaySDK')
+  end
+  patch_arm64_macho(alipay_sim)
+
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      if target.name == 'Runner'
+        target.build_configurations.each do |config|
+          config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited)'
+          config.build_settings['OTHER_LDFLAGS'] += ' -framework CoreTelephony -framework UIKit -framework Foundation -framework CFNetwork -framework SystemConfiguration -framework QuartzCore -framework CoreGraphics -framework CoreMotion -framework CoreText -framework WebKit -lz -lc++'
+        end
+      end
+    end
+  end
+end

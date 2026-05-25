@@ -1,0 +1,28 @@
+PODS:
+  - Flutter (1.0.0)
+  - multi_pay (1.0.0):
+    - Flutter
+    - WechatOpenSDK (~> 2.0.5)
+  - WechatOpenSDK (2.0.5)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - multi_pay (from `.symlinks/plugins/multi_pay/ios`)
+  - WechatOpenSDK (from `WechatOpenSDK`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  multi_pay:
+    :path: ".symlinks/plugins/multi_pay/ios"
+  WechatOpenSDK:
+    :path: WechatOpenSDK
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  multi_pay: 87768b30188b5c734d4f957d840b3f72dbd9f6a5
+  WechatOpenSDK: b278d3b496c5878e6d96e53e69bdabfbb803779a
+
+PODFILE CHECKSUM: 2e2c7e7a3060603ac1170ef792b42818df525926
+
+COCOAPODS: 1.16.2

@@ -1,0 +1,51 @@
+{
+  app: {
+    signingConfigs: [
+      {
+        name: "default",
+        type: "HarmonyOS",
+        material: {
+          certpath: "/Users/juxiaobao/.ohos/config/default_ohos_otDVH7uRTlqiWJ2QpAbOJW6lWdks0YEHmLl1BKc-zFE=.cer",
+          keyAlias: "debugKey",
+          keyPassword: "0000001A2471F5CCD3A1084FD963EAFE6121EB1DC3604A20589D8111417F669EC2B893BCE111BE6CC0C9",
+          profile: "/Users/juxiaobao/.ohos/config/default_ohos_otDVH7uRTlqiWJ2QpAbOJW6lWdks0YEHmLl1BKc-zFE=.p7b",
+          signAlg: "SHA256withECDSA",
+          storeFile: "/Users/juxiaobao/.ohos/config/default_ohos_otDVH7uRTlqiWJ2QpAbOJW6lWdks0YEHmLl1BKc-zFE=.p12",
+          storePassword: "0000001AB22EB0FBF37415016AB70C520DFFE39989AC2F7829C72227308285A5D3EE001548CDC8EFBE25",
+        },
+      },
+    ],
+    products: [
+      {
+        name: "default",
+        signingConfig: "default",
+        compatibleSdkVersion: "6.1.0(23)",
+        runtimeOS: "HarmonyOS",
+        targetSdkVersion: "6.1.0(23)",
+      },
+    ],
+    buildModeSet: [
+      {
+        name: "debug",
+      },
+      {
+        name: "profile",
+      },
+      {
+        name: "release",
+      },
+    ],
+  },
+  modules: [
+    {
+      name: "entry",
+      srcPath: "./entry",
+      targets: [
+        {
+          name: "default",
+          applyToProducts: ["default"],
+        },
+      ],
+    },
+  ],
+}

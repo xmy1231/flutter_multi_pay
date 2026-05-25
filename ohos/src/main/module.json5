@@ -1,0 +1,7 @@
+{
+  "module": {
+    "name": "multi_pay",
+    "type": "har",
+    "deviceTypes": ["phone", "tablet"]
+  }
+}

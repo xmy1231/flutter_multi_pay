@@ -1,0 +1,13 @@
+{
+  name: "multi_pay",
+  version: "1.0.0",
+  description: "Flutter聚合支付插件 - 鸿蒙平台",
+  main: "index.ets",
+  dependencies: {
+    // "@ohos/flutter_ohos": "file:./har/flutter.har",
+    "@cashier_alipay/cashiersdk": "^15.8.43",
+    "@tencent/wechat_open_sdk": "^1.0.17",
+    uppayment: "file:./libs/libuppayment.har",
+  },
+
+}

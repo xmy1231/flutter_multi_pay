@@ -1,0 +1,38 @@
+// 参考：ohos/entry/src/main/module.json5 需要添加的内容
+// 在 "module" 节点下添加以下字段：
+
+{
+  "module": {
+    // ... 原有配置保持不变 ...
+
+    "querySchemes": [
+      "alipays",
+      "uppaywallet",
+      "uppaysdk"
+    ],
+
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "exported": true,
+        "skills": [
+          {
+            "entities": ["entity.system.home"],
+            "actions": ["action.system.home"],
+            "uris": [
+              {
+                "scheme": "uppaymerchantdemo"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+    ]
+  }
+}

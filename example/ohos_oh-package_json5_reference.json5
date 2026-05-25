@@ -1,0 +1,13 @@
+// 参考：ohos/entry/oh-package.json5
+// 创建 entry/thirdlibs/ 目录，将 libuppayment.har 拷贝进去
+
+{
+  "name": "multi_pay_example",
+  "version": "1.0.0",
+  "main": "",
+  "dependencies": {
+    "@cashier_alipay/cashiersdk": "^15.8.26",
+    "@tencent/wechat_open_sdk": "^1.0.14",
+    "uppayment": "file:./thirdlibs/libuppayment.har"
+  }
+}
