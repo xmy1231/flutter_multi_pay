@@ -1,0 +1,4 @@
+# 如果你想彻底让原生目录不参与语言统计，可以直接这样配置：
+ios/** linguist-vendored
+android/** linguist-vendored
+ohos/** linguist-vendored
