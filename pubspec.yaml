@@ -1,9 +1,9 @@
 name: multi_pay
 description: Flutter聚合支付插件，支持支付宝、微信、银联云闪付
 version: 1.0.0
-repository: https://github.com/xmy1231/multi_pay
-homepage: https://github.com/xmy1231/multi_pay
-issue_tracker: https://github.com/xmy1231/multi_pay/issues
+repository: https://github.com/xmy1231/flutter_multi_pay
+homepage: https://github.com/xmy1231/flutter_multi_pay
+issue_tracker: https://github.com/xmy1231/flutter_multi_pay/issues
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
