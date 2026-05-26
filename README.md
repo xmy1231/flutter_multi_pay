@@ -6,19 +6,19 @@ Flutter 聚合支付插件，支持支付宝、微信支付、银联云闪付。
 
 ## 支持的渠道
 
-| 渠道 | 支付方式 | App 未安装处理 |
-|------|---------|---------------|
-| 支付宝 | App 支付 → WAP 降级 | 服务端控制，无门槛 |
-| 微信支付 | App 支付 | 插件返回 `APP_NOT_INSTALLED` |
-| 银联云闪付 | App 支付 → WAP 降级 | 服务端控制，无门槛 |
+| 渠道       | 支付方式 |
+| ---------- | -------- |
+| 支付宝     | App 支付 |
+| 微信支付   | App 支付 |
+| 银联云闪付 | App 支付 |
 
 ## SDK 版本
 
-| SDK | Android | iOS | OHOS |
-|-----|---------|-----|------|
+| SDK    | Android | iOS     | OHOS                                |
+| ------ | ------- | ------- | ----------------------------------- |
 | 支付宝 | 15.8.40 | 15.8.40 | @cashier_alipay/cashiersdk ^15.8.43 |
-| 微信 | 6.8.34 | 2.0.5 | @tencent/wechat_open_sdk ^1.0.17 |
-| 银联 | 3.5.18 | 3.6.3 | libuppayment.har 3.1.3 |
+| 微信   | 6.8.34  | 2.0.5   | @tencent/wechat_open_sdk ^1.0.17    |
+| 银联   | 3.5.18  | 3.6.3   | libuppayment.har 3.1.3              |
 
 ## 安装
 
@@ -75,13 +75,13 @@ if (result.isSuccess) {
 
 ## API
 
-| 方法 | 说明 |
-|------|------|
-| `init(...)` | 初始化 SDK（只需调用一次） |
-| `pay(channel, orderInfo)` | 发起支付 |
-| `onCallback` | 支付结果回调流 |
-| `isAppInstalled(channel)` | 检查支付 App 是否安装 |
-| `getAvailableChannels()` | 获取已安装的支付渠道列表 |
+| 方法                      | 说明                       |
+| ------------------------- | -------------------------- |
+| `init(...)`               | 初始化 SDK（只需调用一次） |
+| `pay(channel, orderInfo)` | 发起支付                   |
+| `onCallback`              | 支付结果回调流             |
+| `isAppInstalled(channel)` | 检查支付 App 是否安装      |
+| `getAvailableChannels()`  | 获取已安装的支付渠道列表   |
 
 ### PaymentChannel
 
@@ -90,22 +90,23 @@ if (result.isSuccess) {
 - `PaymentChannel.unionPay` — 银联云闪付
 
 扩展方法（`PaymentChannelExtension`）：
+
 - `.name` — 渠道标识字符串（`alipay` / `wechat` / `unionPay`）
 - `.displayName` — 中文名称（`支付宝` / `微信支付` / `银联云闪付`）
 - `.fromString(name)` — 字符串转枚举
 
 ### PaymentResult
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `channel` | `PaymentChannel` | 支付渠道 |
-| `status` | `PaymentStatus` | `success` / `failed` / `cancelled` / `pending` |
-| `isSuccess` | `bool` | 快捷判断 |
-| `isFailed` | `bool` | 快捷判断 |
-| `isCancelled` | `bool` | 快捷判断 |
-| `orderId` | `String?` | 订单号 |
-| `errorCode` | `String?` | 错误码（微信未安装时返回 `APP_NOT_INSTALLED`） |
-| `errorMessage` | `String?` | 错误描述 |
+| 字段           | 类型             | 说明                                           |
+| -------------- | ---------------- | ---------------------------------------------- |
+| `channel`      | `PaymentChannel` | 支付渠道                                       |
+| `status`       | `PaymentStatus`  | `success` / `failed` / `cancelled` / `pending` |
+| `isSuccess`    | `bool`           | 快捷判断                                       |
+| `isFailed`     | `bool`           | 快捷判断                                       |
+| `isCancelled`  | `bool`           | 快捷判断                                       |
+| `orderId`      | `String?`        | 订单号                                         |
+| `errorCode`    | `String?`        | 错误码（微信未安装时返回 `APP_NOT_INSTALLED`） |
+| `errorMessage` | `String?`        | 错误描述                                       |
 
 ## 错误处理
 
@@ -170,6 +171,7 @@ dependencies {
 **2. 修改微信的回调 scheme**
 
 插件的 `AndroidManifest.xml` 中包含：
+
 ```xml
 <data android:scheme="wxd930ea5d5a258f4" />
 ```
@@ -302,8 +304,7 @@ import UIKit
 
 ```json5
 {
-  dependencies: {
-  },
+  dependencies: {},
   overrides: {
     multi_pay: "../../ohos",
   },
@@ -326,24 +327,24 @@ entry 模块（`ohos/entry/oh-package.json5`）：
 根模块（`ohos/hvigorfile.ts`）：
 
 ```typescript
-import path from 'path'
-import { appTasks } from '@ohos/hvigor-ohos-plugin'
-import { flutterHvigorPlugin } from 'flutter-hvigor-plugin'
+import path from "path";
+import { appTasks } from "@ohos/hvigor-ohos-plugin";
+import { flutterHvigorPlugin } from "flutter-hvigor-plugin";
 
 export default {
-    system: appTasks,
-    plugins: [flutterHvigorPlugin(path.dirname(__dirname))]
-}
+  system: appTasks,
+  plugins: [flutterHvigorPlugin(path.dirname(__dirname))],
+};
 ```
 
 entry 模块（`ohos/entry/hvigorfile.ts`）：
 
 ```typescript
-import { hapTasks } from '@ohos/hvigor-ohos-plugin'
+import { hapTasks } from "@ohos/hvigor-ohos-plugin";
 export default {
-    system: hapTasks,
-    plugins: []
-}
+  system: hapTasks,
+  plugins: [],
+};
 ```
 
 **3. `module.json5` — 应用配置**
@@ -355,18 +356,24 @@ export default {
     type: "entry",
     deviceTypes: ["phone"],
     querySchemes: ["alipays", "uppaywallet", "uppaysdk"],
-    abilities: [{
-      name: "EntryAbility",
-      srcEntry: "./ets/entryability/EntryAbility.ets",
-      exported: true,
-      skills: [{
-        entities: ["entity.system.home"],
-        actions: ["action.system.home"],
-        uris: [{
-          scheme: "uppaymerchantdemo",  // 你的银联 URI scheme
-        }],
-      }],
-    }],
+    abilities: [
+      {
+        name: "EntryAbility",
+        srcEntry: "./ets/entryability/EntryAbility.ets",
+        exported: true,
+        skills: [
+          {
+            entities: ["entity.system.home"],
+            actions: ["action.system.home"],
+            uris: [
+              {
+                scheme: "uppaymerchantdemo", // 你的银联 URI scheme
+              },
+            ],
+          },
+        ],
+      },
+    ],
     requestPermissions: [{ name: "ohos.permission.INTERNET" }],
   },
 }
@@ -375,21 +382,21 @@ export default {
 **4. `EntryAbility.ets` — 支付回调路由**
 
 ```typescript
-import { FlutterAbility, FlutterEngine } from '@ohos/flutter_ohos'
-import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant'
-import Want from '@ohos.app.ability.Want'
-import AbilityConstant from '@ohos.app.ability.AbilityConstant'
-import { MultiPayPlugin } from 'multi_pay'
+import { FlutterAbility, FlutterEngine } from "@ohos/flutter_ohos";
+import { GeneratedPluginRegistrant } from "../plugins/GeneratedPluginRegistrant";
+import Want from "@ohos.app.ability.Want";
+import AbilityConstant from "@ohos.app.ability.AbilityConstant";
+import { MultiPayPlugin } from "multi_pay";
 
 export default class EntryAbility extends FlutterAbility {
   configureFlutterEngine(flutterEngine: FlutterEngine) {
-    super.configureFlutterEngine(flutterEngine)
-    GeneratedPluginRegistrant.registerWith(flutterEngine)
+    super.configureFlutterEngine(flutterEngine);
+    GeneratedPluginRegistrant.registerWith(flutterEngine);
   }
 
   onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    super.onNewWant(want, launchParam)
-    MultiPayPlugin.handleWant(want)
+    super.onNewWant(want, launchParam);
+    MultiPayPlugin.handleWant(want);
   }
 }
 ```
@@ -421,6 +428,7 @@ node ${PROJECT_ROOT}/ohos/patch-loader-json.js
 ```
 
 构建流程说明：
+
 - `patch-hvigor-ohmurl.js`：注入 `strictMode.useNormalizedOHMUrl` 配置，修改 loader.json 使编译器找到支付宝字节码文件
 - `patch-loader-json.js`：在 `loader_out/<config>/ets/loader.json` 中注入 `byteCodeHarInfo` 条目
 
@@ -435,10 +443,10 @@ node ${PROJECT_ROOT}/ohos/patch-loader-json.js
 
 ### 版本对应
 
-| 目标平台 | Flutter SDK | 版本 | Dart |
-|---------|-------------|------|------|
-| Android / iOS | 标准 Flutter（stable） | 最新稳定版 | 最新 |
-| OHOS (HarmonyOS) | OpenHarmony-TPC fork | oh-3.35.7-release | 3.9.2 |
+| 目标平台         | Flutter SDK            | 版本              | Dart  |
+| ---------------- | ---------------------- | ----------------- | ----- |
+| Android / iOS    | 标准 Flutter（stable） | 最新稳定版        | 最新  |
+| OHOS (HarmonyOS) | OpenHarmony-TPC fork   | oh-3.35.7-release | 3.9.2 |
 
 ### 安装 FVM
 
@@ -484,4 +492,5 @@ alias f-ohos='cd ~/your_project && fvm use ohos/oh-3.35.7-release'
 ## License
 
 MIT
->>>>>>> a532184 (Initial commit: multi_pay flutter plugin)
+
+> > > > > > > a532184 (Initial commit: multi_pay flutter plugin)
