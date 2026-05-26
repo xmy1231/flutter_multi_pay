@@ -11,6 +11,8 @@ node_modules/
 ios/Pods/
 .metadata
 
+.vscode/
+
 # OHOS build
 example/ohos/oh_modules/
 example/ohos/.hvigor/
