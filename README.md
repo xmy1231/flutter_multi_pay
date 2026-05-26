@@ -480,17 +480,15 @@ fvm use ohos/oh-3.35.7-release
 
 切换后重启 VSCode 使 Flutter 扩展加载正确的 SDK。
 
-### 快捷别名（可选）
+<!-- ### 快捷别名（可选）
 
 在 `~/.zshrc` 中添加：
 
 ```bash
 alias f-android='cd ~/your_project && fvm use 3.44.0'
 alias f-ohos='cd ~/your_project && fvm use ohos/oh-3.35.7-release'
-```
+``` -->
 
 ## License
 
 MIT
-
-> > > > > > > a532184 (Initial commit: multi_pay flutter plugin)
