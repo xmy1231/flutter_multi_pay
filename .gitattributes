@@ -2,3 +2,12 @@
 ios/** linguist-vendored
 android/** linguist-vendored
 ohos/** linguist-vendored
+
+# 忽略example
+example/ios/** linguist-vendored
+example/android/** linguist-vendored
+example/ohos/** linguist-vendored
+example/macos/** linguist-vendored
+example/windows/** linguist-vendored
+example/linux/** linguist-vendored
+example/web/** linguist-vendored
